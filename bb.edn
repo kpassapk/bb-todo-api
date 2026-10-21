@@ -1,0 +1,10 @@
+{:paths ["src"]
+ :tasks
+ {test
+  {:doc "Run the tests under test/"
+   :extra-paths ["test"]
+   :requires ([babashka.fs :as fs]
+              [clojure.test :as t])
+   :task (do (doseq [f (fs/glob "test" "**/*_test.clj")] (load-file (str f)))
+             (let [{:keys [fail error]} (t/run-all-tests (re-pattern "todos\\..*-test"))]
+               (when (pos? (+ fail error)) (System/exit 1))))}}}
